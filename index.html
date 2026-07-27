@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Margem & Reforma</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f3ef;
+            padding-bottom: 80px;
+        }
+        
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .card-primary {
+            background: #2d7a6b;
+            color: white;
+        }
+        
+        .card h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        
+        .value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .toggle {
+            display: flex;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 4px;
+            margin-top: 12px;
+        }
+        
+        .toggle button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .toggle button.active {
+            background: white;
+            color: #2d7a6b;
+        }
+        
+        .input-group {
+            margin-bottom: 16px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #2d7a6b;
+        }
+        
+        .hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            background: #2d7a6b;
+            color: white;
+        }
+        
+        .tax-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tax-item:last-child {
+            border-bottom: none;
+        }
+        
+        .tax-name {
+            font-weight: 500;
+        }
+        
+        .tax-desc {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .tax-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: right;
+        }
+        
+        .progress-bar {
+            height: 32px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .progress-blue {
+            background: #2d7a6b;
+        }
+        
+        .progress-orange {
+            background: #e07a3e;
+        }
+        
+        .scenario-chip {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #2d7a6b;
+            color: white;
+            border-radius: 20px;
+            margin: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .warning-box {
+            background: #fff9e6;
+            border-left: 4px solid #f0c040;
+            padding: 12px;
+            margin: 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            color: #888;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: #2d7a6b;
+            font-weight: bold;
+        }
+        
+        .nav-item span {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #2d7a6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+        
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        td:first-child {
+            font-weight: 500;
+        }
+        
+        td:last-child {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- TELA INICIAL -->
+        <div id="screen-home">
+            <div class="card card-primary">
+                <h3>Preço usado</h3>
+                <div class="value" id="home-price">R$ 189,90</div>
+                <h3 style="margin-top: 12px;">Margem atual</h3>
+                <div class="value" id="home-margin">36,94%</div>
+                <h3 style="margin-top: 12px;">Preço mínimo para margem alvo</h3>
+                <div class="value" id="home-min-price">R$ 167,03</div>
+                
+                <div class="toggle">
+                    <button class="active" onclick="setScenario('current')">Real (hoje)</button>
+                    <button onclick="setScenario('2027')">2027</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TELA PREMISSAS -->
+        <div id="screen-premissas" class="hidden">
+            <div class="card">
+                <h3>Premissas</h3>
+                <div class="input-group">
+                    <label>Preço de venda unitário</label>
+                    <input type="text" id="preco" value="189,90" onchange="calculate()">
+                    <div class="hint">o que cobra hoje</div>
+                </div>
+                <div class="input-group">
+                    <label>Margem alvo %</label>
+                    <input type="number" id="margem-alvo" value="35" onchange="calculate()">
+                    <div class="hint">% que quer lucrar</div>
+                </div>
+                <div class="input-group">
+                    <label>Custo variável unitário</label>
+                    <input type="text" id="custo" value="85,00" onchange="calculate()">
+                    <div class="hint">insumo, embalagem</div>
+                </div>
+                <div class="input-group">
+                    <label>Despesa fixa rateada</label>
+                    <input type="text" id="fixa" value="12,50" onchange="calculate()">
+                    <div class="hint">aluguel, salário ÷ unidades</div>
+                </div>
+                <div class="input-group">
+                    <label>Volume mensal</label>
+                    <input type="number" id="volume" value="150" onchange="calculate()">
+                    <div class="hint">quantas unidades vende por mês</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TELA TRIBUTOS -->
+        <div id="screen-tributos" class="hidden">
+            <div class="card">
+                <div class="tabs">
+                    <button class="tab active" onclick="showTaxTab('current')">Atual</button>
+                    <button class="tab" onclick="showTaxTab('2027')">2027</button>
+                </div>
+                
+                <div id="tax-current">
+                    <div class="tax-item">
+                        <div>
+                            <div class="tax-name">PIS</div>
+                            <div class="tax-desc">Programa de Integração Social</div>
+                        </div>
+                        <input type="number" class="tax-input" id="pis" value="1.65" onchange="calculate()">
+                    </div>
+                    <div class="tax-item">
+                        <div>
+                            <div class="tax-name">COFINS</div>
+                            <div class="tax-desc">Contribuição Financiamento</div>
+                        </div>
+                        <input type="number" class="tax-input" id="cofins" value="7.6" onchange="calculate()">
+                    </div>
+                    <div class="tax-item">
+                        <div>
+                            <div class="tax-name">ICMS</div>
+                            <div class="tax-desc">Imposto Mercadorias</div>
+                        </div>
+                        <input type="number" class="tax-input" id="icms" value="18" onchange="calculate()">
+                    </div>
+                    <div class="tax-item">
+                        <div>
+                            <div class="tax-name">IPI</div>
+                            <div class="tax-desc">Produtos Industrializados</div>
+                        </div>
+                        <input type="number" class="tax-input" id="ipi" value="0" onchange="calculate()">
+                    </div>
+                    <div class="tax-item">
+                        <div>
+                            <div class="tax-name">ISS</div>
+                            <div class="tax-desc">Imposto Serviços</div>
+                        </div>
+                        <input type="number" class="tax-input" id="iss" value="2" onchange="calculate()">
+                    </div>
+                </div>
+                
+                <div id="tax-2027" class="hidden">
+                    <div class="tax-item">
+                        <div>
+                            <div class="tax-name">CBS</div>
+                            <div class="tax-desc">Contribuição Bens Serviços</div>
+                        </div>
+                        <input type="number" class="tax-input" id="cbs" value="8.8" onchange="calculate()">
+                    </div>
+                    <div class="tax-item">
+                        <div>
+                            <div class="tax-name">IBS</div>
+                            <div class="tax-desc">Imposto Bens Serviços</div>
+                        </div>
+                        <input type="number" class="tax-input" id="ibs" value="17.7" onchange="calculate()">
+                    </div>
+                    <div class="tax-item">
+                        <div>
+                            <div class="tax-name">IS</div>
+                            <div class="tax-desc">Imposto Seletivo</div>
+                        </div>
+                        <input type="number" class="tax-input" id="is" value="0" onchange="calculate()">
+                    </div>
+                    <div class="tax-item">
+                        <div>
+                            <div class="tax-name">Crédito recuperável</div>
+                            <div class="tax-desc">Estimado</div>
+                        </div>
+                        <input type="number" class="tax-input" id="credito" value="40" onchange="calculate()">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TELA RESULTADO -->
+        <div id="screen-resultado" class="hidden">
+            <div class="card">
+                <h3>Resultado</h3>
+                <table>
+                    <tr>
+                        <td>Receita bruta mensal</td>
+                        <td id="res-receita">R$ 28.485,00</td>
+                    </tr>
+                    <tr>
+                        <td>Impostos por unidade</td>
+                        <td id="res-imposto">R$ 54,12</td>
+                    </tr>
+                    <tr>
+                        <td>Margem de realização</td>
+                        <td id="res-margem">36,94%</td>
+                    </tr>
+                    <tr>
+                        <td>Preço mínimo</td>
+                        <td id="res-minimo">R$ 167,03</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="card">
+                <h3>Comparativo Antes vs Depois</h3>
+                <table>
+                    <tr>
+                        <td>Carga tributária atual</td>
+                        <td id="comp-carga-atual">29,25%</td>
+                    </tr>
+                    <tr>
+                        <td>Carga tributária 2027</td>
+                        <td id="comp-carga-2027">15,90%</td>
+                    </tr>
+                    <tr>
+                        <td>Economia estimada</td>
+                        <td id="comp-economia">13,35%</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- TELA COMPOSIÇÃO -->
+        <div id="screen-composicao" class="hidden">
+            <div class="card">
+                <h3>Composição da Receita</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-blue" id="bar-atual">
+                        Atual: 63,06%
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-orange" id="bar-2027">
+                        2027: 84,10%
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TELA CENÁRIOS -->
+        <div id="screen-cenarios" class="hidden">
+            <div class="card">
+                <h3>Cenários Salvos</h3>
+                <div id="scenarios-list">
+                    <div class="scenario-chip" onclick="loadScenario('Linha Essencial')">Linha Essencial</div>
+                    <div class="scenario-chip" onclick="loadScenario('Casa & Conforto')">Casa & Conforto</div>
+                    <div class="scenario-chip" onclick="loadScenario('Giro Rápido')">Giro Rápido</div>
+                </div>
+                <button class="btn" onclick="saveScenario()">Salvar Cenário Atual</button>
+            </div>
+        </div>
+        
+        <!-- AVISO LEGAL -->
+        <div class="warning-box">
+            ⚠️ Estimativa para decisão, não orientação tributária. Confirme com um profissional habilitado antes de alterar preços ou contratos.
+        </div>
+    </div>
+    
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="showScreen('home', this)">
+            <span></span>
+            Início
+        </div>
+        <div class="nav-item" onclick="showScreen('premissas', this)">
+            <span>📊</span>
+            Premissas
+        </div>
+        <div class="nav-item" onclick="showScreen('tributos', this)">
+            <span>%</span>
+            Tributos
+        </div>
+        <div class="nav-item" onclick="showScreen('resultado', this)">
+            <span></span>
+            Resultado
+        </div>
+    </div>
+    
+    <script>
+        // Variáveis globais
+        let currentScenario = 'current';
+        let scenarios = {};
+        
+        // Inicialização
+        window.onload = function() {
+            calculate();
+            loadScenarios();
+        };
+        
+        // Navegação entre telas
+        function showScreen(screen, navItem) {
+            // Esconde todas as telas
+            document.querySelectorAll('.container > div[id^="screen-"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Mostra tela selecionada
+            document.getElementById('screen-' + screen).classList.remove('hidden');
+            
+            // Atualiza navegação
+            if (navItem) {
+                document.querySelectorAll('.nav-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                navItem.classList.add('active');
+            }
+        }
+        
+        // Toggle cenário
+        function setScenario(scenario) {
+            currentScenario = scenario;
+            const buttons = document.querySelectorAll('.toggle button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            calculate();
+        }
+        
+        // Abas de tributos
+        function showTaxTab(tab) {
+            document.getElementById('tax-current').classList.add('hidden');
+            document.getElementById('tax-2027').classList.add('hidden');
+            document.getElementById('tax-' + tab).classList.remove('hidden');
+            
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        // Cálculos principais
+        function calculate() {
+            // Pega valores
+            const preco = parseFloat(document.getElementById('preco').value.replace(',', '.')) || 0;
+            const margemAlvo = parseFloat(document.getElementById('margem-alvo').value) || 0;
+            const custo = parseFloat(document.getElementById('custo').value.replace(',', '.')) || 0;
+            const fixa = parseFloat(document.getElementById('fixa').value.replace(',', '.')) || 0;
+            const volume = parseInt(document.getElementById('volume').value) || 0;
+            
+            // Calcula carga tributária
+            let cargaAtual, carga2027;
+            
+            if (currentScenario === 'current') {
+                const pis = parseFloat(document.getElementById('pis').value) || 0;
+                const cofins = parseFloat(document.getElementById('cofins').value) || 0;
+                const icms = parseFloat(document.getElementById('icms').value) || 0;
+                const ipi = parseFloat(document.getElementById('ipi').value) || 0;
+                const iss = parseFloat(document.getElementById('iss').value) || 0;
+                cargaAtual = pis + cofins + icms + ipi + iss;
+            } else {
+                const cbs = parseFloat(document.getElementById('cbs').value) || 0;
+                const ibs = parseFloat(document.getElementById('ibs').value) || 0;
+                const credito = parseFloat(document.getElementById('credito').value) || 0;
+                carga2027 = (cbs + ibs) * (1 - credito / 100);
+            }
+            
+            const carga = currentScenario === 'current' ? cargaAtual : carga2027;
+            const impostoUnidade = preco * (carga / 100);
+            const receita = preco * volume;
+            const margem = ((preco - custo - fixa - impostoUnidade) / preco * 100);
+            const precoMinimo = (custo + fixa) / (1 - margemAlvo/100 - carga/100);
+          // Atualiza dashboard
+            document.getElementById('home-price').textContent = formatMoney(preco);
+            document.getElementById('home-margin').textContent = margem.toFixed(2) + '%';
+            document.getElementById('home-min-price').textContent = formatMoney(precoMinimo);
+            
+            // Atualiza resultado
+            document.getElementById('res-receita').textContent = formatMoney(receita);
+            document.getElementById('res-imposto').textContent = formatMoney(impostoUnidade);
+            document.getElementById('res-margem').textContent = margem.toFixed(2) + '%';
+            document.getElementById('res-minimo').textContent = formatMoney(precoMinimo);
+            
+            // Atualiza comparativo
+            const cargaTotalAtual = pis + cofins + icms + ipi + iss;
+            const cargaTotal2027 = (cbs + ibs) * (1 - credito / 100);
+            const economia = cargaTotalAtual - cargaTotal2027;
+            
+            document.getElementById('comp-carga-atual').textContent = cargaTotalAtual.toFixed(2) + '%';
+            document.getElementById('comp-carga-2027').textContent = cargaTotal2027.toFixed(2) + '%';
+            document.getElementById('comp-economia').textContent = (economia > 0 ? '-' : '+') + Math.abs(economia).toFixed(2) + '%';
+            
+            // Atualiza barras
+            const custoTotalAtual = ((custo + fixa + preco * (cargaTotalAtual/100)) / preco * 100);
+            const custoTotal2027 = ((custo + fixa + preco * (cargaTotal2027/100)) / preco * 100);
+            
+            document.getElementById('bar-atual').textContent = 'Atual: ' + (100 - custoTotalAtual).toFixed(2) + '%';
+            document.getElementById('bar-atual').style.width = (100 - custoTotalAtual) + '%';
+            document.getElementById('bar-2027').textContent = '2027: ' + (100 - custoTotal2027).toFixed(2) + '%';
+            document.getElementById('bar-2027').style.width = (100 - custoTotal2027) + '%';
+        }
+        
+        function formatMoney(value) {
+            return 'R$ ' + value.toFixed(2).replace('.', ',');
+        }
+        
+        function saveScenario() {
+            const name = prompt('Nome do cenário:');
+            if (name) {
+                scenarios[name] = {
+                    preco: document.getElementById('preco').value,
+                    margemAlvo: document.getElementById('margem-alvo').value,
+                    custo: document.getElementById('custo').value,
+                    fixa: document.getElementById('fixa').value,
+                    volume: document.getElementById('volume').value
+                };
+                localStorage.setItem('margemReformaScenarios', JSON.stringify(scenarios));
+                updateScenariosList();
+            }
+        }
+        
+        function loadScenarios() {
+            const saved = localStorage.getItem('margemReformaScenarios');
+            if (saved) {
+                scenarios = JSON.parse(saved);
+                updateScenariosList();
+            }
+        }
+        
+        function updateScenariosList() {
+            const list = document.getElementById('scenarios-list');
+            list.innerHTML = '';
+            Object.keys(scenarios).forEach(name => {
+                const chip = document.createElement('div');
+                chip.className = 'scenario-chip';
+                chip.textContent = name;
+                chip.onclick = () => loadScenario(name);
+                list.appendChild(chip);
+            });
+        }
+        
+        function loadScenario(name) {
+            if (scenarios[name]) {
+                const s = scenarios[name];
+                document.getElementById('preco').value = s.preco;
+                document.getElementById('margem-alvo').value = s.margemAlvo;
+                document.getElementById('custo').value = s.custo;
+                document.getElementById('fixa').value = s.fixa;
+                document.getElementById('volume').value = s.volume;
+                calculate();
+            }
+        }
+    </script>
+</body>
+</html>
+      
