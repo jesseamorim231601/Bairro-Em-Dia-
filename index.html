@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bairro em Dia</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; padding-bottom: 90px; color: #1e293b; }
+        .tab-content { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
+        .tab-content.active { display: block; }
+        .app-title { color: #166534; font-size: 26px; font-weight: 800; margin: 0 0 20px 0; text-align: center; }
+        .section-title { color: #1e293b; font-size: 20px; font-weight: 700; margin: 0 0 16px 0; }
+        .card { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 16px; }
+        .card-label { font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px; text-transform: uppercase; }
+        .input-field { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background-color: #f8fafc; color: #1e293b; outline: none; }
+        .input-field:focus { border-color: #166534; background-color: #fff; }
+        .btn-green { background-color: #166534; color: #ffffff; padding: 14px; border: none; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 15px; text-align: center; }
+        .alert-box { background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; margin-top: 16px; }
+        .alert-line { margin: 8px 0; font-size: 14px; color: #334155; display: flex; justify-content: space-between; align-items: center; }
+        .alert-line strong { color: #0f172a; font-size: 16px; }
+        .alert-line .highlight { color: #166534; font-size: 18px; font-weight: 800; }
+        .disclaimer { font-size: 11px; color: #64748b; text-align: center; margin-top: 16px; line-height: 1.4; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-around; padding: 8px 0; box-shadow: 0 -4px 12px rgba(0,0,0,0.05); z-index: 9999; }
+        .nav-btn { background: none; border: none; flex: 1; display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #64748b; font-weight: 600; cursor: pointer; gap: 4px; }
+        .nav-btn .icon { font-size: 20px; }
+        .nav-btn.active { color: #166534; font-weight: 700; }
+        .badge { font-size: 11px; font-weight: 700; color: #166434; background: #dcfce7; padding: 4px 8px; border-radius: 9999px; display: inline-block; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+    <div id="feed-tab" class="tab-content active">
+        <h1 class="app-title">Bairro em Dia</h1>
+        <div class="card">
+            <label class="card-label">Selecione o Bairro Local:</label>
+            <select id="bairro-select" class="input-field" onchange="renderFeed()" style="margin-bottom: 0;">
+                <option value="Tatuapé">Tatuapé</option>
+                <option value="Ipiranga">Ipiranga</option>
+            </select>
+        </div>
+        <div id="offers-container"></div>
+    </div>
+
+    <div id="lojista-tab" class="tab-content">
+        <h2 class="section-title">Painel do Lojista</h2>
+        <div class="card">
+            <label class="card-label">Nova Oferta (Limite: 3 Ativas)</label>
+            <input id="off-title" type="text" placeholder="Título chamativo do produto" class="input-field">
+            <input id="off-desc" type="text" placeholder="Descrição da promoção (ex: preço, detalhes)" class="input-field">
+            <button onclick="addOferta()" class="btn-green">Publicar no Bairro</button>
+        </div>
+        <div id="minhas-ofertas"></div>
+    </div>
+
+    <div id="tributos-tab" class="tab-content">
+        <h2 class="section-title">Análise de Margem e Reforma</h2>
+        <div class="card">
+            <label class="card-label">Custo do Produto (R$)</label>
+            <input id="calc-custo" type="number" value="100" class="input-field" oninput="calcularTributos()">
+            
+            <label class="card-label">Margem Desejada (%)</label>
+            <input id="calc-margem" type="number" value="30" class="input-field" oninput="calcularTributos()">
+            
+            <div class="alert-box">
+                <div class="alert-line">
+                    <span>Preço Atual (29,25% imposto):</span>
+                    <strong id="preco-atual">R$ 0,00</strong>
+                </div>
+                <div class="alert-line" style="border-top: 1px dashed #cbd5e1; padding-top: 8px; margin-top: 8px;">
+                    <span>Preço 2027 (15,90% imposto):</span>
+                    <strong id="preco-2027">R$ 0,00</strong>
+                </div>
+                <div class="alert-line" style="margin-top: 12px;">
+                    <span style="font-weight: 700; color: #166534;">Sua Economia Estimada:</span>
+                    <span id="economia-val" class="highlight">R$ 0,00</span>
+                </div>
+            </div>
+            <p class="disclaimer">Estimativa baseada nas alíquotas projetadas para a Reforma Tributária.</p>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <button id="btn-feed" onclick="switchTab('feed')" class="nav-btn active">
+            <span class="icon">📱</span><span>Feed</span>
+        </button>
+        <button id="btn-lojista" onclick="switchTab('lojista')" class="nav-btn">
+            <span class="icon">🏪</span><span>Lojista</span>
+        </button>
+        <button id="btn-tributos" onclick="switchTab('tributos')" class="nav-btn">
+            <span class="icon">📊</span><span>Tributos</span>
+        </button>
+    </div>
+
+    <script>
+        if(!localStorage.getItem('ofertas')) {
+            localStorage.setItem('ofertas', JSON.stringify([
+                {id: 1, bairro: 'Tatuapé', titulo: 'Combo Pastel + Caldo de Cana', desc: 'Preço especial para moradores apenas nesta terça-feira na feira central.', loja: 'Pastelaria do Bairro'},
+                {id: 2, bairro: 'Ipiranga', titulo: 'Troca de Óleo + Checkup Grátis', desc: 'Traga este cupom impresso ou digitalizado e ganhe 15% de desconto.', loja: 'Auto Mecânica Centro'}
+            ]));
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab + '-tab').classList.add('active');
+            document.getElementById('btn-' + tab).classList.add('active');
+        }
+
+        function renderFeed() {
+            const bairro = document.getElementById('bairro-select').value;
+            const ofertas = JSON.parse(localStorage.getItem('ofertas')) || [];
+            const container = document.getElementById('offers-container');
+            container.innerHTML = '';
+            const filtradas = ofertas.filter(o => o.bairro === bairro);
+            if(filtradas.length === 0) {
+                container.innerHTML = '<div class="card" style="text-align:center; color:#64748b;">Nenhuma oferta ativa neste bairro hoje.</div>';
+                return;
+            }
+            filtradas.forEach(o => {
+                container.innerHTML += `
+                    <div class="card">
+                        <span class="badge">${o.loja}</span>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 700;">${o.titulo}</h3>
+                        <p style="margin: 0 0 16px 0; font-size: 14px; color: #475569;">${o.desc}</p>
+                        <button onclick="alert('Cupom gerado!')" class="btn-green">Resgatar Cupom</button>
+                    </div>`;
+            });
+        }
+
+        function addOferta() {
+            const titulo = document.getElementById('off-title').value.trim();
+            const desc = document.getElementById('off-desc').value.trim();
+            const bairro = document.getElementById('bairro-select').value;
+            if(!titulo || !desc) return alert('Preencha os campos!');
+            const ofertas = JSON.parse(localStorage.getItem('ofertas')) || [];
+            ofertas.push({id: Date.now(), bairro: bairro, titulo: titulo, desc: desc, loja: 'Minha Loja Local'});
+            localStorage.setItem('ofertas', JSON.stringify(ofertas));
+            document.getElementById('off-title').value = '';
+            document.getElementById('off-desc').value = '';
+            renderFeed();
+            alert('Oferta publicada!');
+            switchTab('feed');
+        }
+
+        function calcularTributos() {
+            const custo = parseFloat(document.getElementById('calc-custo').value) || 0;
+            const margem = parseFloat(document.getElementById('calc-margem').value) || 0;
+            const pAtual = (custo * (1 + margem/100)) / (1 - 0.2925);
+            const p2027 = (custo * (1 + margem/100)) / (1 - 0.1590);
+            const economia = pAtual - p2027;
+            document.getElementById('preco-atual').innerText = 'R$ ' + pAtual.toFixed(2).replace('.', ',');
+            document.getElementById('preco-2027').innerText = 'R$ ' + p2027.toFixed(2).replace('.', ',');
+            document.getElementById('economia-val').innerText = 'R$ ' + (economia > 0 ? economia.toFixed(2).replace('.', ',') : '0,00');
+        }
+
+        renderFeed();
+        calcularTributos();
+    </script>
+</body>
+  </html>
+          
